@@ -1,6 +1,6 @@
 {
   "name": "kiri-ui-package",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "main": "kiri-ui-package.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -14,5 +14,5 @@
   ],
   "author": "kiri",
   "license": "ISC",
-  "description": "UI优化"
+  "description": "新增功能：1. 增加三角形、五边形和六边形缺口形状 2. 增加用户验证时间和超越率"
 }

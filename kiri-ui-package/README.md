@@ -24,9 +24,17 @@ app.use(KiriUi);
 | height | 滑动验证码的高度 | Number | 100 |
 | tolerance | 误差值 | Number | 3 |
 | backroundImage | 背景图片地址 | String | 无 |
+| shape | 缺口形状 | String | square |
+
+#### 缺口形状
+| 形状 | 说明 |
+| --- | --- |
+| square | 正方形缺口 |
+| triangle | 三角形缺口 |
+| pentagon | 五边形缺口 |
+| hexagon | 六边形缺口 |
 
 ### 事件
 | 事件名 | 说明 | 参数 |
-| --- | --- | --- |
-| success | 滑动成功的回调函数 | isVerified | 
+
 
