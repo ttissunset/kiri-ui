@@ -6,13 +6,14 @@
       shape="triangle"
       backgroundImage="https://kirii.online/kiri/20250820-175522.webp"
     ></kiri-slide-verify>
+    <kiri-color-picker></kiri-color-picker>
   </div>
 </template>
 
 <script setup>
-const onSuccess = (data) => {
-  console.log("success", data);
-};
+// const onSuccess = (data) => {
+//   console.log("success", data);
+// };
 </script>
 
 <style scoped>

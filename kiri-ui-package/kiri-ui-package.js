@@ -1,10 +1,10 @@
-import { defineAsyncComponent as i } from "vue";
-const s = /* @__PURE__ */ Object.assign({ "./kiri-ui/kiri-slide-verify.vue": () => import("./kiri-slide-verify-WNMD3QVa.js") }), r = function(n) {
-  for (const [e, o] of Object.entries(s)) {
-    const t = e.slice(e.lastIndexOf("/") + 1, e.lastIndexOf("."));
-    n.component(t, i(o));
+import { defineAsyncComponent as t } from "vue";
+const r = /* @__PURE__ */ Object.assign({ "./kiri-ui/kiri-color-picker.vue": () => import("./kiri-color-picker-DktgtOjv.js"), "./kiri-ui/kiri-slide-verify.vue": () => import("./kiri-slide-verify-ObDHobWR.js") }), c = function(o) {
+  for (const [e, i] of Object.entries(r)) {
+    const n = e.slice(e.lastIndexOf("/") + 1, e.lastIndexOf("."));
+    o.component(n, t(i));
   }
 };
 export {
-  r as default
+  c as default
 };
