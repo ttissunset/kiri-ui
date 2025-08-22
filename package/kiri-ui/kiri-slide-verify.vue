@@ -6,34 +6,67 @@
   >
     <!-- 图形校验区域 -->
     <div
-      class="check"
-      ref="check"
+      class="check-container"
       :style="{
-        backgroundImage: `url(${backgroundImage})`,
         width: `${width}px`,
         height: `${height}px`,
       }"
+    >
+      <div
+        class="check"
+        ref="check"
+        :style="{
+          backgroundImage: `url(${backgroundImage})`,
+          width: `${width}px`,
+          height: `${height}px`,
+        }"
       >
         <!-- 缺口 -->
+        <div
+          class="check-content"
+          :class="`shape-${shape}`"
+          :style="{
+            left: `${x}px`,
+            top: `${y}px`,
+          }"
+        ></div>
+        <!-- 滑块 -->
+        <div
+          class="check-block"
+          :class="`shape-${shape}`"
+          ref="checkBlock"
+          :style="{
+            backgroundPosition: `-${x}px -${y}px`,
+            backgroundSize: `${width}px ${height}px`,
+            top: `${y}px`,
+          }"
+        ></div>
+      </div>
+
+      <!-- 验证成功遮罩层 -->
       <div
-        class="check-content"
-        :class="`shape-${shape}`"
+        class="success-mask"
+        v-if="isVerified"
         :style="{
-          left: `${x}px`,
-          top: `${y}px`,
+          width: `${width}px`,
+          height: `${height}px`,
         }"
-      ></div>
-      <!-- 滑块 -->
-      <div
-        class="check-block"
-        :class="`shape-${shape}`"
-        ref="checkBlock"
-        :style="{
-          backgroundPosition: `-${x}px -${y}px`,
-          backgroundSize: `${width}px ${height}px`,
-          top: `${y}px`,
-        }"
-      ></div>
+      >
+        <div class="success-content">
+          <p class="success-info">
+            你只用了
+            <span>{{ timeUsed }}</span>
+            s完成拼图，成功超越率全国
+            <span
+              :style="{
+                color: successRate < 60 ? 'red' : '#04be02',
+                fontSize: '20px'
+              }"
+              >{{ successRate }}</span
+            >%的用户
+          </p>
+        </div>
+      </div>
     </div>
 
     <!-- 拖动条 -->
@@ -45,8 +78,7 @@
       ref="drag"
     >
       <!-- 绿色区域 -->
-      <div class="dragBg" ref="dragBg">
-      </div>
+      <div class="dragBg" ref="dragBg"></div>
       <!-- 拖动条滑块 -->
       <div
         class="drag-block"
@@ -54,7 +86,7 @@
         @mousedown="handleMouseDown"
         @mouseup="handleMouseUp"
       >
-        <span class="slider-icon">{{ isVerified ? '✔' : '➡' }}</span>
+        <span class="slider-icon" ref="sliderIcon"></span>
       </div>
       <!-- 拖动条提示文字 -->
       <div class="drag-tips" ref="dragTips"></div>
@@ -90,8 +122,8 @@ const props = defineProps({
     default: "square",
     validator: (value) => {
       return ["square", "triangle", "pentagon", "hexagon"].includes(value);
-    }
-  }
+    },
+  },
 });
 
 // Emits
@@ -105,9 +137,16 @@ const drag = ref(null);
 const dragBlock = ref(null);
 const dragTips = ref(null);
 const dragBg = ref(null);
+const sliderIcon = ref(null);
 
 // 是否验证成功的标志
 const isVerified = ref(false);
+
+// 计时相关变量
+const startTime = ref(0);
+const endTime = ref(0);
+const timeUsed = ref(0);
+const successRate = ref(99);
 
 // 确保在组件挂载时初始化状态
 onMounted(() => {
@@ -137,8 +176,11 @@ let offsetX = 0;
 
 // 处理鼠标按下事件
 const handleMouseDown = (event) => {
+  if (isVerified.value) return;
   isMouseDown = true;
   startX = event.clientX;
+  // 记录开始拖动时间
+  startTime.value = Date.now();
   // 每次按下都要清空动画效果，防止造成的延缓
   dragBlock.value.style.transition = "";
   checkBlock.value.style.transition = "";
@@ -147,12 +189,13 @@ const handleMouseDown = (event) => {
 
 // 处理鼠标弹起事件
 const handleMouseUp = () => {
+  if (isVerified.value) return;
   isMouseDown = false;
 };
 
 // 处理鼠标移动事件
 const handleMouseMove = (event) => {
-  if (!isMouseDown) return;
+  if (!isMouseDown || isVerified.value) return;
   // 计算鼠标横向移动的距离
   offsetX = event.pageX - startX;
   // 判断滑块位置是否越界
@@ -167,6 +210,7 @@ const handleMouseMove = (event) => {
 
 // 处理拖动的时候鼠标弹起事件
 const handleDragMouseUp = (event) => {
+  if (isVerified.value) return;
   isMouseDown = false;
   const isWithinTolerance =
     offsetX >= x - props.tolerance && offsetX <= x + Number(props.tolerance);
@@ -182,16 +226,27 @@ const handleDragMouseUp = (event) => {
 // 验证成功回调
 const handleSuccess = () => {
   isVerified.value = true;
+  // 记录结束时间并计算用时
+  endTime.value = Date.now();
+  timeUsed.value = ((endTime.value - startTime.value) / 1000).toFixed(2);
+
+  // 计算超越率 (默认99%，每多0.5s减少1%，最低1%)
+  const baseTime = 0.5; // 基准时间0.5秒
+  const timeDiff = Math.max(0, parseFloat(timeUsed.value) - baseTime);
+  const rateReduction = Math.floor(timeDiff / 0.5);
+  successRate.value = Math.max(1, 99 - rateReduction);
+
   dragBlock.value.style.backgroundColor = "#78cabd";
   dragBg.value.style.backgroundColor = "#d4f5f1";
   dragBg.value.classList.add("success");
   dragTips.value.classList.add("success");
+  sliderIcon.value.classList.add("success");
+
   emit("success", isVerified.value);
 };
 
 const handleFail = () => {
   isVerified.value = false;
-  dragBlock.value.style.backgroundColor = "#40e0d0";
   dragBg.value.style.width = 0;
   dragBg.value.style.transition = "all 0.3s ease";
   dragBlock.value.style.transform = "translateX(0px)";
@@ -232,7 +287,6 @@ export default {
 .check-content {
   width: 50px;
   height: 50px;
-  /* border: 1px solid #fff; */
   background: rgba(0, 0, 0, 0.5);
   position: absolute;
 }
@@ -285,7 +339,7 @@ export default {
   border-radius: 0;
   clip-path: none;
 }
-  
+
 /* 拖动条 */
 .drag {
   height: 50px;
@@ -333,8 +387,44 @@ export default {
   font-weight: bold;
 }
 
+.slider-icon::after {
+  content: "➡";
+  top: 0;
+  left: 0;
+}
+
+.slider-icon.success::after {
+  content: "✔";
+}
+
 .drag-block:active {
   cursor: grabbing;
+}
+
+.check-container {
+  position: relative;
+}
+
+.success-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+}
+
+.success-content {
+  text-align: center;
+  color: white;
+  padding: 20px;
+}
+
+.success-info {
+  font-size: 14px;
+  margin: 5px 0;
 }
 
 .drag-tips {

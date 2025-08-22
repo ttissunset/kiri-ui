@@ -3,7 +3,8 @@
     <kiri-slide-verify
       tolerance="2"
       @success="onSuccess"
-      backgroundImage="https://kirii.online/kiri/20250819-162636.webp"
+      shape="triangle"
+      backgroundImage="https://kirii.online/kiri/20250820-175522.webp"
     ></kiri-slide-verify>
   </div>
 </template>
