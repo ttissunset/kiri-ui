@@ -1,7 +1,7 @@
 <template>
   <div class="body">
     <kiri-slide-verify
-      tolerance=2
+      tolerance="2"
       @success="onSuccess"
       backgroundImage="https://kirii.online/kiri/20250819-162636.webp"
     ></kiri-slide-verify>

@@ -13,10 +13,11 @@
         width: `${width}px`,
         height: `${height}px`,
       }"
-    >
-      <!-- 缺口 -->
+      >
+        <!-- 缺口 -->
       <div
         class="check-content"
+        :class="`shape-${shape}`"
         :style="{
           left: `${x}px`,
           top: `${y}px`,
@@ -25,6 +26,7 @@
       <!-- 滑块 -->
       <div
         class="check-block"
+        :class="`shape-${shape}`"
         ref="checkBlock"
         :style="{
           backgroundPosition: `-${x}px -${y}px`,
@@ -43,14 +45,17 @@
       ref="drag"
     >
       <!-- 绿色区域 -->
-      <div class="dragBg" ref="dragBg"></div>
+      <div class="dragBg" ref="dragBg">
+      </div>
       <!-- 拖动条滑块 -->
       <div
         class="drag-block"
         ref="dragBlock"
         @mousedown="handleMouseDown"
         @mouseup="handleMouseUp"
-      ></div>
+      >
+        <span class="slider-icon">{{ isVerified ? '✔' : '➡' }}</span>
+      </div>
       <!-- 拖动条提示文字 -->
       <div class="drag-tips" ref="dragTips"></div>
     </div>
@@ -58,7 +63,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed, onMounted } from "vue";
 
 // Props
 const props = defineProps({
@@ -78,11 +83,22 @@ const props = defineProps({
   tolerance: {
     type: Number,
     default: 2,
+  },
+  // 缺口形状: square(正方形), triangle(三角形), pentagon(五边形), hexagon(六边形)
+  shape: {
+    type: String,
+    default: "square",
+    validator: (value) => {
+      return ["square", "triangle", "pentagon", "hexagon"].includes(value);
+    }
   }
 });
 
 // Emits
 const emit = defineEmits(["success"]);
+
+// 获取形状属性
+const shape = computed(() => props.shape);
 
 const checkBlock = ref(null);
 const drag = ref(null);
@@ -92,6 +108,12 @@ const dragBg = ref(null);
 
 // 是否验证成功的标志
 const isVerified = ref(false);
+
+// 确保在组件挂载时初始化状态
+onMounted(() => {
+  dragBg.value.classList.remove("success");
+  dragTips.value.classList.remove("success");
+});
 
 // 随机生成 x,y坐标
 const random = (min, max) => {
@@ -162,10 +184,13 @@ const handleSuccess = () => {
   isVerified.value = true;
   dragBlock.value.style.backgroundColor = "#78cabd";
   dragBg.value.style.backgroundColor = "#d4f5f1";
+  dragBg.value.classList.add("success");
+  dragTips.value.classList.add("success");
   emit("success", isVerified.value);
 };
 
 const handleFail = () => {
+  isVerified.value = false;
   dragBlock.value.style.backgroundColor = "#40e0d0";
   dragBg.value.style.width = 0;
   dragBg.value.style.transition = "all 0.3s ease";
@@ -173,6 +198,8 @@ const handleFail = () => {
   checkBlock.value.style.transform = "translateX(0px)";
   dragBlock.value.style.transition = "transform 0.3s ease";
   checkBlock.value.style.transition = "transform 0.3s ease";
+  dragBg.value.classList.remove("success");
+  dragTips.value.classList.remove("success");
 };
 </script>
 
@@ -205,7 +232,7 @@ export default {
 .check-content {
   width: 50px;
   height: 50px;
-  border: 1px solid #fff;
+  /* border: 1px solid #fff; */
   background: rgba(0, 0, 0, 0.5);
   position: absolute;
 }
@@ -220,6 +247,45 @@ export default {
   left: 0;
 }
 
+/* 三角形缺口 */
+.shape-triangle.check-content,
+.shape-triangle.check-block {
+  width: 50px;
+  height: 50px;
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.shape-triangle.check-block {
+  background: inherit;
+  border: 1px solid #fff;
+}
+
+/* 五边形缺口 */
+.shape-pentagon.check-content,
+.shape-pentagon.check-block {
+  width: 50px;
+  height: 46px;
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+}
+
+/* 六边形缺口 */
+.shape-hexagon.check-content,
+.shape-hexagon.check-block {
+  width: 50px;
+  height: 58px;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+/* 正方形缺口需要保持默认样式 */
+.shape-square.check-content,
+.shape-square.check-block {
+  width: 50px;
+  height: 50px;
+  border-radius: 0;
+  clip-path: none;
+}
+  
 /* 拖动条 */
 .drag {
   height: 50px;
@@ -235,7 +301,13 @@ export default {
   width: 0px;
   height: 100%;
   display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 1;
+}
+
+.dragBg.success .success-text {
+  opacity: 1;
 }
 
 /* 可拖动的盒子 */
@@ -250,6 +322,15 @@ export default {
   cursor: pointer;
   border-radius: 2px;
   transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slider-icon {
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .drag-block:active {
@@ -269,6 +350,10 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.drag-tips.success::after {
+  content: "";
 }
 
 .drag-tips::after {
