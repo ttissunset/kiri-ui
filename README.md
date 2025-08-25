@@ -20,10 +20,10 @@ app.use(KiriUi);
 ### 属性
 | 属性 | 说明 | 类型 | 默认值 |
 | --- | --- | --- | --- |
-| width | 滑动验证码的宽度 | Number | 300 |
-| height | 滑动验证码的高度 | Number | 100 |
-| tolerance | 误差值 | Number | 3 |
-| backroundImage | 背景图片地址 | String | 无 |
+| width | 滑动验证码的宽度 | Number | 400 |
+| height | 滑动验证码的高度 | Number | 250 |
+| tolerance | 误差值 | Number | 2 |
+| backroundImage | 背景图片地址 | String | "https://kirii.online/kiri/12.jpg" |
 | shape | 缺口形状 | String | square |
 
 #### 缺口形状
