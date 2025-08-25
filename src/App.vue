@@ -6,7 +6,11 @@
       shape="triangle"
       backgroundImage="https://kirii.online/kiri/20250820-175522.webp"
     ></kiri-slide-verify> -->
-    <kiri-color-picker :showColorDisplay="true"></kiri-color-picker>
+    <!-- <kiri-color-picker :showColorDisplay="true"></kiri-color-picker> -->
+    <kiri-map
+      mapKey=""
+      securityJsCode=""
+    ></kiri-map>
   </div>
 </template>
 
