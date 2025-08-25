@@ -1,5 +1,41 @@
-# Vue 3 + Vite
+# 快速入门
+依赖安装：
+```bash
+npm install kiri-ui-package
+```
+在 main.js 中引入：
+```javascript
+import  KiriUi from 'kiri-ui-package';
+import  'kiri-ui-package/kiri-ui-package.css';
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+app.use(KiriUi);
+```
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+## KiriSlideVerify 滑动验证码组件
+在模板中使用：
+```html
+<kiri-slide-verify width="300" height="100" tolerance="3" backroundImage="url" shape="square" @success="onSuccess"></kiri-slide-verify>
+```
+
+### 属性
+| 属性 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| width | 滑动验证码的宽度 | Number | 300 |
+| height | 滑动验证码的高度 | Number | 100 |
+| tolerance | 误差值 | Number | 3 |
+| backroundImage | 背景图片地址 | String | 无 |
+| shape | 缺口形状 | String | square |
+
+#### 缺口形状
+| 形状 | 说明 |
+| --- | --- |
+| square | 正方形缺口 |
+| triangle | 三角形缺口 |
+| pentagon | 五边形缺口 |
+| hexagon | 六边形缺口 |
+
+### 事件
+| 事件名 | 说明 | 参数 |
+| --- | --- | --- | 
+| success | 验证成功回调 | isVerified | 
+
