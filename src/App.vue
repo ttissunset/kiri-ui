@@ -1,12 +1,12 @@
 <template>
   <div class="body">
-    <kiri-slide-verify
+    <!-- <kiri-slide-verify
       tolerance="2"
       @success="onSuccess"
       shape="triangle"
       backgroundImage="https://kirii.online/kiri/20250820-175522.webp"
-    ></kiri-slide-verify>
-    <kiri-color-picker></kiri-color-picker>
+    ></kiri-slide-verify> -->
+    <kiri-color-picker :showColorDisplay="true"></kiri-color-picker>
   </div>
 </template>
 

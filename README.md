@@ -37,5 +37,19 @@ app.use(KiriUi);
 ### 事件
 | 事件名 | 说明 | 参数 |
 | --- | --- | --- | 
-| success | 验证成功回调 | isVerified | 
+| success | 验证成功回调,返回是否验证成功 | isVerified | 
 
+## KiriColorPicker 颜色选择器组件
+在模板中使用：
+```html
+<kiri-color-picker :showColorDisplay="true" @picked="onColorPicked"></kiri-color-picker>
+```
+### 属性
+| 属性 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| showColorDisplay | 是否显示当前颜色和选中颜色 | Boolean | true |
+
+### 事件
+| 事件名 | 说明 | 参数 |
+| --- | --- | --- | 
+| picked | 选中颜色回调,返回当前选中颜色值 | color | 
